@@ -1,72 +1,113 @@
-from datetime import datetime, timedelta
-
 class Veiculo:
     def __init__(self, marca, modelo, ano):
         self.marca = marca
         self.modelo = modelo
-        self.ano = ano 
+        self.ano = ano
+        self.disponivel = True
+    
+    def alugado(self):
+        self.disponivel = False
+
+    def devolvido(self):
         self.disponivel = True
 
-class Carro(Veiculo):
+class Carro(Veiculo): #Carro herda de veiculo
     def __init__(self, marca, modelo, ano, placa, quilometragem, valor_diaria):
         super().__init__(marca, modelo, ano)
         self.placa = placa
         self.quilometragem = quilometragem
         self.valor_diaria = valor_diaria
 
-class Cliente:
-    def __init__(self, nome, cliente_cpf):
-        self.nome = nome
-        self.cliente_cpf = cliente_cpf
-        self.carros_alugados = []
-    
-    def alugar_carro(self, carro, dias):
-        if carro.disponivel:
-            alugel = Alugel(carro, self, datetime.today(), dias)
-            carro.disponivel = False
-            self.carros_alugados.append(alugel)
-
-class Alugel:
-    def __init__(self, carro, cliente, data_inicial, dias):
-        self.carro = carro
-        self.cliente = cliente
-        self.data_inicial = data_inicial
-        self.data_final = data_inicial + timedelta(days=dias)
-        self.valor_alugel = dias * carro.valor_diaria
-        self.valor_multa = 0
-
-    def devolver(self):
-        if datetime.today() > self.data_final:
-            dias_atraso = (datetime.today() - self.data_final).days
-            self.valor_multa = dias_atraso * 0.20 * self.carro.valor_diaria
-        self.data_final = datetime.today()
-    
     def __str__(self):
-        return f"{self.carro.marca} {self.carro.modelo} ({self.carro.ano}) - {self.carro.placa}"
+        return f'{self.marca} {self.modelo} ({self.ano}) - placa {self.placa}'
+    
+class Cliente:
+    def __init__(self, nome, id):
+        self.nome = nome
+        self.id = id
+        self.historico = [] #Lista para guardar os carros alugados
+
+    def alugar_carro(self, carro):
+        if carro.disponivel:
+            carro.disponivel = False
+            self.historico.append(carro)
+            return True
+        else:
+            return False
+    
+    def devolver_carro(self, carro):
+        if carro in self.historico:
+            carro.disponivel = True
+            self.historico.remove(carro)
+
+class Carro_Disponivel:
+    def __init__(self):
+        self.carros = [] #Cria uma lista para armazenar os carros
+
+    def adicionar_carro(self, carro):
+        self.carros.append(carro)
+    
+    def get_carros_disponiveis(self):
+        return [carro for carro in self.carros if carro.disponivel]
+    
+    def get_carros_por_marca(self, marca):
+        return [carro for carro in self.carros if carro.marca == marca]
+    
+    def get_carros_por_modelo(self, modelo):
+        return [carro for carro in self.carros if carro.modelo == modelo]
+    
+    def get_carros_por_ano(self, ano):
+        return [carro for carro in self.carros if carro.ano == ano]
     
 class App:
     def __init__(self):
-        self.carros = []
-        self.clientes = []
+        self.disponivel = Carro_Disponivel()
 
-    def cadastrar_carro(self, carro):
-        self.carros.append(carro)
-
-    def cadastrar_cliente(self, cliente):
-        self.clientes.append(cliente)
-
-    def listar_carros_disponiveis(self):
-        return [carro for carro in self.carros if carro.disponivel]
-    
-    def listar_carros_por_marca(self, marca):
-        return [carro for carro in self.carros if carro.marca.lower() == marca.lower()]
-    
-    def listar_carros_por_ano(self, ano):
-        return [carro for carro in self.carros if carro.ano == ano]
-    
-    def alugar_carro(self, cliente_cpf, placa, dias):
-        cliente = next((c for c in self.carros if c.placa == placa), None)
-        if cliente and carro:
-            alugel = cliente.alugar_carro(carro, dias)
-            if alugel:
-                return f"{cliente}"
+    def run(self):
+        while True:
+            print("1. Cadastrar veículo")
+            print("2. Consultar disponibilidade de veículos")
+            print("3. Listar veículos por marca")
+            print("4. Listar veículos por modelo")
+            print("5. Listar veículos por ano")
+            print("0. Sair")
+            escolha = input("Escolha uma opção: ")
+            if escolha == '1':
+                marca = input("Marca: ")
+                modelo = input("Modelo: ")
+                ano = input("Ano: ")
+                placa = input("Placa: ")
+                quilometragem = input("Quilometragem: ")
+                carro = Carro(marca, modelo, ano, placa, quilometragem)
+                self.disponivel.adicionar_carro(carro)
+                print(f'{carro} cadastrado com sucesso!\n')
+            elif escolha == '2':
+                Carro_Disponivel = self.disponivel.get_carros_disponiveis()
+                if Carro_Disponivel:
+                    print("Veículos disponíveis: ")
+                    for carro in Carro_Disponivel:
+                        print(f'- {carro}')
+                else:
+                    print("Não há veículos disponíveis no momento. ")
+                print()
+            elif escolha == '3':
+                marca = input("Marca: ")
+                carros_por_marca = self.disponivel.get_carros_por_marca(marca)
+                if carros_por_marca:
+                    print(f'Veículos da marca {marca}')
+                    for carro in carros_por_marca:
+                        print(f'- {carro}')
+                else:
+                    print(f'Não há veículos da marca {marca}.')
+                print()
+            elif escolha == '4':
+                modelo = input("Modelo: ")
+                carros_por_modelo = self.disponivel.get_carros_por_modelo(modelo)
+                if carros_por_modelo:
+                    print(f'Veículos do modelo {modelo}:')
+                    for car in carros_por_modelo:
+                        print(f'- {carro}')
+                else:
+                    print(f'Não há veículos do modelo {modelo}. ')
+                print()
+            

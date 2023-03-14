@@ -4,7 +4,7 @@ Projeto da disciplina **Laboratório de Programação Orientada a Objetos**
 
 ## Equipe
 - Anthony Anderson Freitas da Silva (Turma C)
-- Leonardo Couta da Escóssia (Turma A)
+- Leonardo Couto da Escóssia (Turma A)
 - Yan Brendo Silva Araújo (Turma C)
 
 

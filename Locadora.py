@@ -1,10 +1,11 @@
-import os #tirar na versao final, socoloquei pra ajudar na hora de limpar a idle
+import os #tirar na versao final, so coloquei pra ajudar na hora de limpar a idle
 from datetime import *
 
 
-#Arrumar data
-#Arrumar Quilometragem
-#Arrumar Valor do aluguel e o atraso
+#Arrumar Data
+#Arrumar Quilometragem de cada carro - *Arrumada 19/03
+#Arrumar Valor do aluguel e o atraso - *Arrumado o Valor do Aluguel 19/03
+#Arrumar Histórico de Carros de cada Cliente
 
 
 class Veiculo:
@@ -31,18 +32,30 @@ class Carro(Veiculo): #Carro herda de veiculo
     def __str__(self):
         return f'{self.marca} {self.modelo} - Ano ({self.ano}) - Placa: {self.placa} - Valor da diária: {self.valor_diaria} R$ - Quilometragem do Carro: {self.quilometragem} Km'
     
-    def valor_aluguel(self, valor):
+    def valor_aluguel(self, valor, dias):
+
         self.valor = int(valor)
-        valor_diaria = self.valor_diaria * valor
-        print(valor_diaria)
+        self.valor_total = self.valor_diaria * valor
+        self.dias_em_atraso = dias
+
+        if(self.disponivel == False):
+            return (((self.valor_total * (0.20)) + self.valor_total) * dias)
+        #print(f"Valor Total da Diária: {valor_diaria}")
+        else:
+            return self.valor_total
     
+    def mudanca_quilometragem(self, quilo):
+        self.quilo = quilo
+        self.quilometragem = quilo - self.quilometragem
+        print("Nova quilometragem do carro é : {} Km".format(self.quilometragem))
+
 
 class Cliente:
     def __init__(self,nome):
         self.nome = nome
         #self.id = id
         self.historico = [] #Lista para guardar os carros alugados
-        self.clientes_cadastrados = []
+        self.clientes_cadastrados = [] #Lista para guardar os clientes
 
 
 #Talvez eu tenha feita uma seboseira aqui!
@@ -65,7 +78,9 @@ class Cliente:
 
     def cadastrar_cliente(self, nome):
         self.clientes_cadastrados.append(nome)
-    
+
+    def atualizar_clientes(self, nome):
+        self.clientes_cadastrados.append(nome)
 
    
 
@@ -92,20 +107,22 @@ class Carro_Disponivel:
 
 
 
-class App:
+class App(Carro):
 
     def __init__(self):
         self.disponivel = Carro_Disponivel()
-    
+        self.cliente = Cliente(self)
+        
+
 
     def run(self):
         
 
-        cliente = Cliente(self)
-        cliente.historico.append(Carro('BMW', 'BM3', 2022, '1234', 12, 12))  #Cadastrar um carro alugado
-        cliente.cadastrar_cliente('Leonardo Couto') #Cadastrar um cliente
+        #cliente = Cliente(self)
+        self.cliente.historico.append(Carro('BMW', 'BM3', 2022, '1234', 12, 12))  #Cadastrar um carro alugado
+        self.cliente.cadastrar_cliente('LEONARDO COUTO') #Cadastrar um cliente
 
-    
+        
         #Cadastrar alguns carros antes
         self.disponivel.adicionar_carro(Carro('FIAT', 'UNO', 2020, '1234', 12, 12))
         self.disponivel.adicionar_carro(Carro('FIAT', 'PULSE', 2020, '1234', 12, 12))
@@ -115,8 +132,9 @@ class App:
 
         while True:
 
-            #os.system('clear')
+            os.system('clear')
 
+            print("\nBem-Vindo a Locadora de Carros dos Rapazes\n")
             print("1. Cadastrar veículo")
             print("2. Consultar disponibilidade de veículos")
             print("3. Listar veículos por marca")
@@ -125,7 +143,7 @@ class App:
             print("6. Alugar veículos")
             print("7. Devolver veículos")
             print("8. Cadastrar Cliente")
-            print("9. Lista de Clientes")
+            print("9. Lista de Clientes e Histórico")
             print("10. Lista de Carros alugados")
             print("0. Sair")
 
@@ -230,7 +248,7 @@ class App:
                         print("Impossível alugar um carro que não está na lista!")
                     
                     else:
-                        cliente.alugar_carro(lista[carro_alugado])
+                        self.cliente.alugar_carro(lista[carro_alugado])
                         #cliente.historico.append(lista[carro_alugado])
                         lista.pop(carro_alugado)
 
@@ -244,22 +262,25 @@ class App:
                         dia = timedelta(days= tempo_de_aluguel)
                         data_de_entrega = data + dia
                         
-                        #teste = (Carro(self, self, self, self, self, 12))
-
-                        #teste.valor_aluguel(tempo_de_aluguel)
                         
+                        valor = lista[carro_alugado]
+                        total = valor.valor_aluguel(tempo_de_aluguel, 0)
                         
+                        cliente_escolhido = str(input("Qual o cliente que deseja alugar o carro? "))
+                        v = self.cliente.clientes_cadastrados
+                        cliente_certo = v.index(cliente_escolhido.upper())
+                        #self.cliente.atualizar_clientes(v[cliente_certo], lista[carro_alugado])
 
-
-
-                        print(f"\nCarro alugado com sucesso na data {data_certa} pelo o Cliente ...\n")
-                        print(f"Data de entrega do Carro é: {data_de_entrega}")
+                        
+                        print(f"\nCarro alugado com sucesso na Data: {data_certa} pelo o Cliente *{v[cliente_certo]}*\n")
+                        print(f"\nData de entrega do Carro é: {data_de_entrega}\n")
+                        print(f"Valor a se pagar no final do aluguel : {total}")
 
                     os.system('pause')
                     
             elif (escolha == 7):
 
-                lista_alugados = cliente.historico
+                lista_alugados = self.cliente.historico
                 lista = self.disponivel.carros
                 
                 data = date.today()
@@ -277,7 +298,7 @@ class App:
 
                     carro_devolvido = (int(input("Digite o carro que você desejar devolver: ")) - 1)
                     nova_quilometragem = int(input("Digite a Quilometragem Final do Carro: "))
-                    
+                    carro_d = lista_alugados[carro_devolvido]
                     
                     #Falta implementar a quilometragem corretamente
                     #Ver também de fazer a comparação normal
@@ -286,35 +307,55 @@ class App:
                         print("Impossível devolver um carro que não está na lista!")
                     else: 
                         lista.append(lista_alugados[carro_devolvido])
-                        cliente.devolver_carro(carro_devolvido)
+                        self.cliente.devolver_carro(carro_devolvido)
+
+                        carro_d.mudanca_quilometragem(nova_quilometragem)
+                        
+
                         print(f"Carro devolvido com sucesso na data {data_certa} pelo o Cliente ...")
-                
+                        print(f"\nData de entrega do Carro é: {data_de_entrega}\n")
+                        print(f"Valor a se pagar no final do aluguel : {total}")
+
+
                 os.system('pause')
 
             elif (escolha == 8):
                 nome = str(input("Digite seu Nome para o cadastro: "))  
                 #id = input("Digite seu ID como cliente: ")   #ID talvez seria bom gerar aleatoriamente, se der.
-                cliente.cadastrar_cliente(nome)
+                self.cliente.cadastrar_cliente(nome)
                 
                 os.system('pause')
 
             elif (escolha == 9):
-
-                tam = len(cliente.clientes_cadastrados)
+                clientes = self.cliente.clientes_cadastrados
+                tam = len(self.cliente.clientes_cadastrados)
                     
                 print("\nClientes Cadastrados: \n")
                 for i in range(0,tam):
-                    print(f'Nº {i + 1} - {cliente.clientes_cadastrados[i]}\n')
+                    print(f'Nº {i + 1} - {self.cliente.clientes_cadastrados[i]}\n')
+
+
+                hist = (int(input("Deseja ver o histórico de carros de qual cliente cadastrado? Escolha pela a numeração: ")) - 1)
+
+
+
+                if(tam == 0):
+                    print("Nenhum cliente está cadastrado, volte outro dia!")
+                else:
+                    for i in range(0, hist):
+                        print(f"\nHistórico do Cliente {clientes[i]}: \n")
 
                 os.system('pause')
 
             elif (escolha == 10):
-                lista_alugados = cliente.historico
+                clientes = self.cliente.clientes_cadastrados
+                lista_alugados = self.cliente.historico
                 tam = len(lista_alugados)
                 
                 print("\nCarros em Aluguel: \n")
                 for i in range(0,tam):
-                    print(f'{i + 1} - {lista_alugados[i]}\n')
+                    #print(f'{i + 1} - {lista_alugados[i]} pelo Cliente {clientes[i]}')  #{v[cliente_certo]}\n
+                    print(f'{i + 1} - {lista_alugados[i]} pelo Cliente ...') 
 
                 os.system('pause')
 

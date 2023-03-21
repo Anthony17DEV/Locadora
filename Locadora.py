@@ -26,14 +26,14 @@ class App():
             'ano': self.ano,
             'marca': self.marca,
             'modelo': self.modelo,
-            'quilometragem': self.quilometragem,
+            'km': self.km,
             'aluguel': self.aluguel
         }
         aluguel_carro.append(alugado)
         print("Carro alugado com sucesso!")
         print(aluguel_carro)
 
-    def lista_alugados(self): # Quero
+    def lista_alugados(self):
         if len(aluguel_carro) > 0:
             for i, loc in enumerate(aluguel_carro):
                 print(f"Carro {i + 1}:")
@@ -44,7 +44,7 @@ class App():
                 print(f"Ano: {loc['ano']}")
                 print(f"Marca: {loc['marca']}")
                 print(f"Modelo: {loc['modelo']}")
-                print(f"Quilometragem: {loc['quilometragem']}")
+                print(f"Km: {loc['km1']}")
                 print(f"Aluguel:{loc['aluguel']}")
             print(f"Total de veículos alugados é: {len(aluguel_carro)}\n")
         else:
@@ -118,11 +118,11 @@ class Veiculo():
         self.alugado = False
 
 class Carro(Veiculo):
-    def __init__(self, marca, modelo, ano, placa, valor, quilometragem):
+    def __init__(self, marca, modelo, ano, placa, valor, km):
         super().__int__(marca, modelo, ano)
         self.placa = placa
         self.valor = valor
-        self.quilometragem = quilometragem
+        self.km = km
 
     def novo_carro(self):
         while True:
@@ -134,13 +134,14 @@ class Carro(Veiculo):
         self.ano = int(input("Ano: "))
         self.marca = str(input("Digite a marca: ")).upper()
         self.modelo = str(input("Digite o modelo: ")).upper()
-        self.quilometragem = int(input("Quantos km já foram percorridos: "))
+        self.km = int(input("Quantos km já foram percorridos: "))
         self.aluguel = "DISPONIVEL"
         carro = {
             'placa': self.placa,
             'ano': self.ano,
             'marca': self.marca,
             'modelo': self.modelo,
+            'km': self.km,
             'aluguel': self.aluguel
         }
         lista_veiculos.append(carro)
@@ -154,7 +155,7 @@ class Carro(Veiculo):
                 print(f"Ano: {car['ano']}")
                 print(f"Marca: {car['marca']}")
                 print(f"Modelo: {car['modelo']}")
-                print(f"Quilometragem: {car['quilometragem']}")
+                print(f"Km: {car['km']}")
                 print(f"Aluguel:{car['aluguel']}")
             print(f"Total de veículos é: {len(lista_veiculos)}\n")
         else:
@@ -169,7 +170,7 @@ class Carro(Veiculo):
                     print(f"Ano: {car['ano']}")
                     print(f"Marca: {car['marca']}")
                     print(f"Modelo: {car['modelo']}")
-                    print(f"Quilometragem: {car['quilometragem']}")
+                    print(f"Km: {car['km']}")
                     print(f"Aluguel:{car['aluguel']}")
                     break
         else:
@@ -187,7 +188,7 @@ class Carro(Veiculo):
                         print(f"Ano: {car['ano']}")
                         print(f"Marca: {car['marca']}")
                         print(f"Modelo: {car['modelo']}")
-                        print(f"Quilometragem: {car['quilometragem']}")
+                        print(f"Km: {car['km']}")
                         print(f"Aluguel:{car['aluguel']}")
                         if car['aluguel'] == "ALUGADO":
                             print("O veículo já está locado!")
@@ -213,14 +214,14 @@ class Carro(Veiculo):
                         print(f"\tAno: {car['ano']}")
                         print(f"\tMarca: {car['marca']}")
                         print(f"\tModelo: {car['modelo']}")
-                        print(f"\tQuilometragem: {car['quilometragem']}")
+                        print(f"\tKm: {car['km']}")
                         print(f"\tAluguel: {car['aluguel']}\n")
 
                         car['placa'] = str(input("Placa:")).upper()
                         car['ano'] = str(input("Ano:"))
                         car['marca'] = str(input("Marca:")).upper()
                         car['modelo'] = str(input("modelo:")).upper()
-                        car['quilometragem'] = int(input("Quilometragem: "))
+                        car['km'] = int(input("Km: "))
                         car['aluguel'] = print(
                             f"\tAluguel: {car['aluguel']}\n")
 

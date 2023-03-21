@@ -30,6 +30,7 @@ class App():
             'aluguel': self.aluguel
         }
         aluguel_carro.append(alugado)
+        print("Carro alugado com sucesso!")
         print(aluguel_carro)
 
     def lista_alugados(self):
@@ -43,7 +44,7 @@ class App():
                 print(f"Ano: {loc['ano']}")
                 print(f"Marca: {loc['marca']}")
                 print(f"Modelo: {loc['modelo']}")
-                print(f"Km: {loc['km1']}")
+                print(f"Km: {loc['km']}")
                 print(f"Aluguel:{loc['aluguel']}")
             print(f"Total de veículos alugados é: {len(aluguel_carro)}\n")
         else:
@@ -82,7 +83,7 @@ class App():
                 App.alugar(self)
 
             elif opcao == 4:
-                App.lista_aluguel(self)
+                App.lista_alugados(self)
 
             elif opcao == 5:
                 Carro.buscar_carro(self)
@@ -110,15 +111,15 @@ class App():
                 print("\nInválido!\n")
 
 class Veiculo():
-    def __int__(self, marca, modelo, ano):
+    def _int_(self, marca, modelo, ano):
         self.marca = marca
         self.modelo = modelo
         self.ano = ano
         self.alugado = False
 
 class Carro(Veiculo):
-    def __init__(self, marca, modelo, ano, placa, valor, km):
-        super().__int__(marca, modelo, ano)
+    def _init_(self, marca, modelo, ano, placa, valor, km):
+        super()._int_(marca, modelo, ano)
         self.placa = placa
         self.valor = valor
         self.km = km
@@ -234,7 +235,7 @@ class Carro(Veiculo):
             print("Não existe veículo a ser alterado!")
 
 class Cliente():
-    def __init__(self, nome, cpf, rg):
+    def _init_(self, nome, cpf, rg):
         self.nome = nome
         self.cpf = cpf
         self.rg = rg

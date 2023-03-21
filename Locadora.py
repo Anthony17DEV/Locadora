@@ -30,7 +30,6 @@ class App():
             'aluguel': self.aluguel
         }
         aluguel_carro.append(alugado)
-        print("Carro alugado com sucesso!")
         print(aluguel_carro)
 
     def lista_alugados(self):

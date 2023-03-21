@@ -135,15 +135,9 @@ class Carro(Veiculo):
         self.marca = str(input("Digite a marca: ")).upper()
         self.modelo = str(input("Digite o modelo: ")).upper()
         self.km = int(input("Quantos km já foram percorridos: "))
+        self.valor = int(input("Qual o valor da diaria: "))
         self.aluguel = "DISPONIVEL"
-        carro = {
-            'placa': self.placa,
-            'ano': self.ano,
-            'marca': self.marca,
-            'modelo': self.modelo,
-            'km': self.km,
-            'aluguel': self.aluguel
-        }
+        carro = Carro(self.marca, self.modelo, self.ano, self.placa, self.valor, self.km)
         lista_veiculos.append(carro)
         print(lista_veiculos)
 
@@ -222,9 +216,7 @@ class Carro(Veiculo):
                         car['marca'] = str(input("Marca:")).upper()
                         car['modelo'] = str(input("modelo:")).upper()
                         car['km'] = int(input("Km: "))
-                        car['aluguel'] = print(
-                            f"\tAluguel: {car['aluguel']}\n")
-
+                        car['aluguel'] = print(f"\tAluguel: {car['aluguel']}\n")
                         print(f"Os dados da {self.placa} foram alterados")
                         break
 

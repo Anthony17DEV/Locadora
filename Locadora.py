@@ -1,306 +1,461 @@
-lista_veiculos = []
-lista_clientes = []
-aluguel_carro = []
+import os #tirar na versao final, so coloquei pra ajudar na hora de limpar a idle
+from datetime import *
+from random import *
 
-class App():
+#Arrumar as entradas de dados, quando sai um Int ao inves de uma String, a locadora morre. Arrumar isso.
+#Arrumar Data
+#Arrumar Quilometragem de cada carro - *Arrumada 19/03
+#Arrumar Valor do aluguel e o atraso - *Arrumado o Valor do Aluguel 19/03
+#Arrumar Histórico de Carros de cada Cliente
 
-    def alugar(self):
 
-        self.cpf = str(input("Digite o CPF: "))
-        while True:
-            if not Cliente.existe_cliente(self):
-                print("Novo Cadastro!")
-                Cliente.novo_cliente(self)
-            else:
-                break
-        Carro.listar_carro(self)
-        Carro.buscar_carro_alugar(self)
-        App.lista_aluguel(self)
+clientes_cadastrados = [] #Lista para guardar os clientes
 
-    def lista_aluguel(self):
-        alugado = {
-            'nome': self.nome,
-            'cpf': self.cpf,
-            'rg': self.rg,
-            'placa': self.placa,
-            'ano': self.ano,
-            'marca': self.marca,
-            'modelo': self.modelo,
-            'km': self.km,
-            'aluguel': self.aluguel
-        }
-        aluguel_carro.append(alugado)
-        print("Carro alugado com sucesso!")
-        print(aluguel_carro)
 
-    def lista_alugados(self):
-        if len(aluguel_carro) > 0:
-            for i, loc in enumerate(aluguel_carro):
-                print(f"Carro {i + 1}:")
-                print(f"Nome: {loc['nome']}")
-                print(f"CPF: {loc['cpf']}")
-                print(f"RG: {loc['rg']}\n")
-                print(f"Placa: {loc['placa']}")
-                print(f"Ano: {loc['ano']}")
-                print(f"Marca: {loc['marca']}")
-                print(f"Modelo: {loc['modelo']}")
-                print(f"Km: {loc['km']}")
-                print(f"Aluguel:{loc['aluguel']}")
-            print(f"Total de veículos alugados é: {len(aluguel_carro)}\n")
-        else:
-            print("\nNenhum veículo alugado para listar! ")
-
-    def menu(self):
-
-        while True:
-            print("Bem Vindo a locadora Rapazes")
-            print("1 - Cadastrar novo veículo")
-            print("2 - Cadastrar novo cliente")
-            print("3 - Locação de veículo")
-            print("4 - Relatório de locação")
-            print("5 - Busca de veículos cadastrados")
-            print("6 - Busca de clientes cadastrados")
-            print("7 - Relatório de veículos cadastrados")
-            print("8 - Relatório de clientes cadastrados")
-            print("9 - Alterar dados veículos cadastrados")
-            print("10 - Alterar dados clientes cadastrados")
-            print("11 - Finalizar o programa !!!")
-
-            while True:
-                try:
-                    opcao = int(input("\nDigite: "))
-                    break
-                except ValueError:
-                    print("\nNão aceita letras!\n")
-
-            if opcao == 1:
-                Carro.novo_carro(self)
-
-            elif opcao == 2:
-                Cliente.novo_cliente(self)
-
-            elif opcao == 3:
-                App.alugar(self)
-
-            elif opcao == 4:
-                App.lista_alugados(self)
-
-            elif opcao == 5:
-                Carro.buscar_carro(self)
-
-            elif opcao == 6:
-                Cliente.buscar_cliente(self)
-
-            elif opcao == 7:
-                Carro.listar_carro(self)
-
-            elif opcao == 8:
-                Cliente.listar_cliente(self)
-
-            elif opcao == 9:
-                Carro.alterar_carro(self)
-
-            elif opcao == 10:
-                Cliente.alterar_cliente(self)
-
-            elif opcao == 11:
-                print("\nFinalizado!!!")
-                break
-
-            else:
-                print("\nInválido!\n")
 
 class Veiculo():
-    def _int_(self, marca, modelo, ano):
+    def _init_(self, marca, modelo, ano):
         self.marca = marca
         self.modelo = modelo
         self.ano = ano
-        self.alugado = False
+        self.disponivel = True
+    
+    def alugado(self):
+        self.disponivel = False
 
-class Carro(Veiculo):
-    def _init_(self, marca, modelo, ano, placa, valor, km):
-        super()._int_(marca, modelo, ano)
+    def devolvido(self):
+        self.disponivel = True
+
+
+class Carro(Veiculo): #Carro herda de veiculo
+    def _init_(self, marca, modelo, ano, placa, quilometragem, valor_diaria):
+        super()._init_(marca, modelo, ano)
         self.placa = placa
-        self.valor = valor
-        self.km = km
+        self.quilometragem = quilometragem
+        self.valor_diaria = valor_diaria
 
-    def novo_carro(self):
-        while True:
-            self.placa = str(input("\n\nPlaca: ")).upper()
-            if not Carro.existe_carro(self):
-                break
-            else:
-                print("\nJá cadastrado no sistema")
-        self.ano = int(input("Ano: "))
-        self.marca = str(input("Digite a marca: ")).upper()
-        self.modelo = str(input("Digite o modelo: ")).upper()
-        self.km = int(input("Quantos km já foram percorridos: "))
-        self.valor = int(input("Qual o valor da diaria: "))
-        self.aluguel = "DISPONIVEL"
-        carro = Carro(self.marca, self.modelo, self.ano, self.placa, self.valor, self.km)
-        lista_veiculos.append(carro)
-        print(lista_veiculos)
+    def _str_(self):
+        return f'{self.marca} {self.modelo} - Ano ({self.ano}) - Placa: {self.placa} - Valor da diária: {self.valor_diaria} R$ - Quilometragem do Carro: {self.quilometragem} Km'
+    
+    def valor_aluguel(self, valor, dias):
 
-    def listar_carro(self):
-        if len(lista_veiculos) > 0:
-            for i, car in enumerate(lista_veiculos):
-                print(f"Carro {i + 1}:")
-                print(f"Placa: {car['placa']}")
-                print(f"Ano: {car['ano']}")
-                print(f"Marca: {car['marca']}")
-                print(f"Modelo: {car['modelo']}")
-                print(f"Km: {car['km']}")
-                print(f"Aluguel:{car['aluguel']}")
-            print(f"Total de veículos é: {len(lista_veiculos)}\n")
+        self.valor = int(valor)
+        self.valor_total = self.valor_diaria * valor
+        self.dias_em_atraso = dias
+
+        if(self.disponivel == False):
+            return (((self.valor_total * (0.20)) + self.valor_total) * dias)
+        #print(f"Valor Total da Diária: {valor_diaria}")
         else:
-            print("\nNenhum veículo para listar! ")
+            return self.valor_total
+    
+    def mudanca_quilometragem(self, quilo):
+        self.quilo = quilo
+        self.quilometragem = quilo - self.quilometragem
+        print("\nNova quilometragem do carro é : {} Km\n".format(self.quilometragem))
 
-    def buscar_carro(self):
-        if len(lista_veiculos) > 0:
-            self.placa = str(input("Digite a placa: ")).upper()
-            for car in lista_veiculos:
-                if car['placa'] == self.placa:
-                    print(f"Placa: {car['placa']}")
-                    print(f"Ano: {car['ano']}")
-                    print(f"Marca: {car['marca']}")
-                    print(f"Modelo: {car['modelo']}")
-                    print(f"Km: {car['km']}")
-                    print(f"Aluguel:{car['aluguel']}")
-                    break
-        else:
-            print("Nenhum veiculo cadastrado")
 
-    def buscar_carro_alugar(self):
-        if len(lista_veiculos) > 0:
-            self.placa = str(input("Digite a placa: ")).upper()
-            for car in lista_veiculos:
-                if car['aluguel'] == "ALUGADO":
-                    print("Nenhum veiculo disponível para alugar TOPEZERA!")
-                else:
-                    if car['placa'] == self.placa:
-                        print(f"Placa: {car['placa']}")
-                        print(f"Ano: {car['ano']}")
-                        print(f"Marca: {car['marca']}")
-                        print(f"Modelo: {car['modelo']}")
-                        print(f"Km: {car['km']}")
-                        print(f"Aluguel:{car['aluguel']}")
-                        if car['aluguel'] == "ALUGADO":
-                            print("O veículo já está locado!")
-                        else:
-                            car['aluguel'] = "ALUGADO"
-        else:
-            print("Nenhum veiculo disponível para alugar!!!")
-
-    def existe_carro(self): #quero
-        if len(lista_veiculos) > 0:
-            for car in lista_veiculos:
-                if car['placa'] == self.placa:
-                    return True
-        return False
-
-    def alterar_carro(self):
-        if len(lista_veiculos) > 0:
-            self.placa = str(input("Digite a placa : ")).upper()
-            if Carro.existe_carro(self):
-                for car in lista_veiculos:
-                    if car['placa'] == self.placa:
-                        print(f"\n\tPlaca: {car['placa']}")
-                        print(f"\tAno: {car['ano']}")
-                        print(f"\tMarca: {car['marca']}")
-                        print(f"\tModelo: {car['modelo']}")
-                        print(f"\tKm: {car['km']}")
-                        print(f"\tAluguel: {car['aluguel']}\n")
-
-                        car['placa'] = str(input("Placa:")).upper()
-                        car['ano'] = str(input("Ano:"))
-                        car['marca'] = str(input("Marca:")).upper()
-                        car['modelo'] = str(input("modelo:")).upper()
-                        car['km'] = int(input("Km: "))
-                        car['aluguel'] = print(f"\tAluguel: {car['aluguel']}\n")
-                        print(f"Os dados da {self.placa} foram alterados")
-                        break
-
-            else:
-                print(
-                    f"Não existe veiculo cadastrado com a placa informado {self.placa}")
-        else:
-            print("Não existe veículo a ser alterado!")
-
-class Cliente():
-    def _init_(self, nome, cpf, rg):
+class Cliente():  #Arrumar, tirar essa classe de dentro
+    def _init_(self,nome):
         self.nome = nome
-        self.cpf = cpf
-        self.rg = rg
-
-    def alterar_cliente(self):
-        if len(lista_clientes) > 0:
-            self.cpf = str(input("Digite o CPF : ")).upper()
-            if Cliente.existe_cliente(self):
-                for clt in lista_clientes:
-                    if clt['cpf'] == self.cpf:
-                        print(f"\n\tNome: {clt['nome']}")
-                        print(f"\tCPF: {clt['cpf']}")
-                        print(f"\tRG: {clt['rg']}")
-
-                        clt['nome'] = str(input("Nome: ")).upper()
-                        clt['cpf'] = str(input("CPF: "))
-                        clt['rg'] = str(input("RG: "))
-
-                        print(f"Os dados de {self.nome} foi alterado")
-                        break
-
-            else:
-                print("Esse CPF não está cadastrado")
+        self.id = randint(1, 200)
+        self.historico = [] #Lista para guardar os carros alugados
+        self.historico_clientes = [] #Lista para guardar os historicos dos clientes
+ 
+#Talvez eu tenha feita uma seboseira aqui!
+    def alugar_carro(self, carro):
+        if carro.disponivel:
+            #carro.disponivel = False
+            self.historico.append(carro)
+            
+            return True
         else:
-            print("Não existem clientes a serem alterados!")
-
-    def listar_cliente(self):
-        if len(lista_clientes) > 0:
-            for i, clt in enumerate(lista_clientes):
-                print(f"\nCliente {i + 1}:")
-                print(f"Nome: {clt['nome']}")
-                print(f"CPF: {clt['cpf']}")
-                print(f"RG: {clt['rg']}\n")
-            print(f"Total de clientes é: {len(lista_clientes)}\n")
+            return False
+    
+    def devolver_carro(self, carro, data):
+        self.data = data
+        #if carro in self.historico:
+        if self.historico != 0:
+            #carro.disponivel = True
+            self.historico.pop(carro)
         else:
-            print("\nNenhum cliente para listar!\n")
+            return False  
 
-    def buscar_cliente(self):
-        if len(lista_clientes) > 0:
-            self.cpf = str(input("Digite o cpf: ")).upper()
-            for car in lista_clientes:
-                if car['cpf'] == self.cpf:
-                    print(f"\nNome: {car['nome']}")
-                    print(f"CPF: {car['cpf']}")
-                    print(f"RG: {car['rg']}\n")
-                    break
+    def historico_carros_alugado(self):
+        lista_alugados = self.historico
+                
+        tam = len(lista_alugados)
+                
+        if tam == 0:
+             print("\nNenhum carro está alugado no momento!\n")
+
         else:
-            print("\nNenhum cliente cadastrado no sistema!\n")
+            print("\nCarros em Aluguel: \n")
+            for i in range(0,tam):
+            #print(f'{i + 1} - {lista_alugados[i]} pelo Cliente {clientes[i]}')  #{v[cliente_certo]}\n
+             print(f'{i + 1} - {lista_alugados[i]} pelo Cliente ...')
 
-    def existe_cliente(self):
-        if len(lista_clientes) > 0:
-            for clt in lista_clientes:
-                if clt['cpf'] == self.cpf:
-                    return True
-        return False
+           
+    def seu_historico(self):
+        print(self.historico_clientes)
+        tam = len(self.historico_clientes)
+        print(f"\nTamanho: {tam}\n")
 
-    def novo_cliente(self):
+        if(tam == 0):
+            print("\nEsse Usuário nunca alugou nenhum carro!\n")
+        else:
+            print("\nDeu certo!\n")
+           #for carro in self.historico_clientes:
+                #print(f"marca: {carro._marca}\nmodelo: {carro._modelo}\nano: {carro._ano}\n")
+
+    def base_pro_historico(self, carro):  
+        self.historico_clientes.append(carro)
+        tam2 = len(self.historico_clientes)
+        print(f"\nTamanho: {tam2}\n")
+
+        if(tam2 == 0):
+            print("\nEsse Usuário nunca alugou nenhum carro!\n")
+        else:
+            print("\nDeu certo!\n")
+
+    def mostrar(self):
+        self.cliente = clientes_cadastrados
+               
+                    
+        print("\nClientes Cadastrados: \n")
+        i = 1
+        for cliente in self.cliente:
+           print(f'Nº {i} - {cliente} - {self.id}\n')
+           i += 1    
+
+    def _str_(self):
+       return f'Cliente: {self.nome} - {self.id}'
+    
+
+class Carro_Disponivel:
+    def _init_(self):
+        self.carros = [] #Cria uma lista para armazenar os carros
+
+    def adicionar_carro(self, carro):
+        self.carros.append(carro)
+    
+    def get_carros_disponiveis(self):
+        return [carro for carro in self.carros if carro.disponivel]
+    
+    def get_carros_por_marca(self, marca):
+        return [carro for carro in self.carros if carro.marca == marca]
+    
+    def get_carros_por_modelo(self, modelo):
+        return [carro for carro in self.carros if carro.modelo == modelo]
+    
+    def get_carros_por_ano(self, ano):
+        return [carro for carro in self.carros if carro.ano == ano]
+    
+
+
+class App(Carro, Cliente): #Arrumar, tirar essa classe de dentro
+
+    def _init_(self):
+        self.disponivel = Carro_Disponivel()
+        
+    def cadastrar_cliente(nome): #Cadastro de clientes
+        clientes_cadastrados.append(nome) 
+
+
+    def run(self):
+        
+        
+        cliente = Cliente('LEONARDO COUTO')
+        clientes_cadastrados.append(cliente)
+
+        #App.cadastrar_cliente(self,'LEONARDO COUTO') #Cadastrar um cliente
+        cliente.historico.append(Carro('BMW', 'BM3', 2022, '1234', 12, 12)) #Cadastrar um carro alugado
+        
+        #Cadastrar alguns carros antes
+        self.disponivel.adicionar_carro(Carro('FIAT', 'UNO', 2020, '1234', 12, 12))
+        self.disponivel.adicionar_carro(Carro('FIAT', 'PULSE', 2020, '1234', 12, 12))
+        self.disponivel.adicionar_carro(Carro('FIAT', 'PUNTO', 2020, '1234', 12, 12))
+        #self.disponivel.adicionar_carro(Carro('FIAT', 'TORO', 2020, '1234', 12, 12))
+        
+
         while True:
-            self.cpf = str(input("Digite o CPF: "))
-            if not Cliente.existe_cliente(self):
+
+            os.system('clear||cls')
+
+            print("\nBem-Vindo a Locadora de Carros dos Rapazes\n")
+            print("1. Cadastrar veículo")
+            print("2. Consultar disponibilidade de veículos")
+            print("3. Listar veículos por marca")
+            print("4. Listar veículos por modelo")
+            print("5. Listar veículos por ano")
+            print("6. Alugar veículos")
+            print("7. Devolver veículos")
+            print("8. Cadastrar Cliente")
+            print("9. Lista de Clientes e Histórico")
+            print("10. Lista de Carros alugados")
+            print("0. Sair")
+
+            escolha = int(input("Escolha uma opção: "))
+
+            if (escolha == 1):
+
+                marca = str(input("Marca: ")) #Colocar Marca e modelo Maisculos para facilitar a comparação
+                marca2 = marca.upper() #Colocar Marca e modelo Maisculos para facilitar a comparação
+                modelo = str(input("Modelo: ")) #Colocar Marca e modelo Maisculos para facilitar a comparação
+                modelo2 = modelo.upper() #modelo em CAPSLOCK
+                ano = int(input("Ano: "))
+                placa = str(input("Placa: "))
+                quilometragem = int(input("Quilometragem: "))
+                valor_da_diaria = int(input("Valor da diária: "))
+                carro = Carro(marca2, modelo2, ano, placa, quilometragem, valor_da_diaria)
+                self.disponivel.adicionar_carro(carro)
+                print(f'{carro} cadastrado com sucesso!\n')
+
+                os.system('pause')
+
+            elif (escolha == 2):
+                i = 1
+                Carro_Disponivel = self.disponivel.get_carros_disponiveis()
+                if Carro_Disponivel:
+                    print("Veículos disponíveis: ")
+                    for carro in Carro_Disponivel:
+                        print(f'{i} - {carro}')
+                        i = i + 1
+                else:
+                    print("Não há veículos disponíveis no momento. ")
+                print()
+
+                os.system('pause')
+
+            elif (escolha == 3):
+                i = 1
+                marca = str(input("Marca: "))
+                marca2 = marca.upper() #marca em CAPSLOCK
+                carros_por_marca = self.disponivel.get_carros_por_marca(marca2)
+                if carros_por_marca:
+                    print(f'Veículos da marca {marca2}')
+                    for carro in carros_por_marca:
+                        print(f'{i} - {carro}')
+                        i = i + 1
+                else:
+                    print(f'Não há veículos da marca {marca2}.')
+
+                print()
+
+                os.system('pause')
+
+            elif (escolha == 4):
+                i = 1
+                modelo = str(input("Modelo: "))
+                modelo2 = modelo.upper() #modelo em CAPSLOCK
+                carros_por_modelo = self.disponivel.get_carros_por_modelo(modelo2)
+                if carros_por_modelo:
+                    print(f'Veículos do modelo {modelo2}:')
+                    for carro in carros_por_modelo:
+                        print(f'{i} - {carro}')
+                        i = i + 1
+                else:
+                    print(f'Não há veículos do modelo {modelo2}. ')
+
+                print()
+
+                os.system('pause')
+
+            elif (escolha == 5):
+                i = 1
+                ano = int(input("Ano: "))
+                carros_por_ano = self.disponivel.get_carros_por_ano(ano)
+                if carros_por_ano:
+                    print(f'Veículos do ano {ano}:')
+                    for carro in carros_por_ano:
+                        print(f'{i} - {carro}')
+                        i = i + 1
+                else:
+                    print(f'Não há veículos do modelo {ano}. ')
+
+                print()
+
+                os.system('pause')
+
+            elif (escolha == 6):
+
+                lista = self.disponivel.carros #para pegar a lista de carros disponíveis para aluguel
+                
+                if not lista: #se a lista de carros disponiveis estiver vazia
+                    print("Impossível alugar um carro, pois não tem nenhum disponível!")
+                    os.system("pause")
+
+                else: #se a lista de carros disponiveis não estiver vazia
+                    
+                    cliente.mostrar()
+                    cliente_escolhido = str(input("Qual o cliente que deseja alugar o carro? Digite pelo o Nome: "))
+                    
+                    v = clientes_cadastrados
+                    cliente_certo = v.index(cliente_escolhido.upper())    
+
+
+                    tam = len(lista)
+                    print("\nCarros Disponíveis para Aluguel: \n")
+                    for i in range(0,tam):
+                        print(f'{i + 1}- {lista[i]}\n')
+
+                    carro_alugado = (int(input("Deseja Alugar qual carro?\nEscolha pela a numeração! ")) - 1)
+                    
+
+                    if carro_alugado > tam:
+                        print("Impossível alugar um carro que não está na lista!")
+                    
+                    else:
+                        
+                        
+                        
+                        #Ver também de fazer a comparação normal
+
+                        data = date.today()
+                        data_certa = data.strftime('%d/%m')
+                        
+                        
+                        tempo_de_aluguel = int(input("Deseja alugar o carro por quantos dias: "))
+                        dia = timedelta(days= tempo_de_aluguel)
+                        data_de_entrega = data + dia
+                        
+                        
+                        valor = lista[carro_alugado]
+                        
+                        total = valor.valor_aluguel(tempo_de_aluguel, 0)
+                        #Arrumar aqui depois, ja que to pegando pela a Classe (Carro)
+
+                        '''
+                        print("\nLista de Clientes Disponíveis: \n")
+                        for i in range(0, len(clientes_cadastrados)):
+                            print(f'Nº {i + 1} - {clientes_cadastrados[i]}\n')
+                        '''
+                        
+                    
+                        cliente.alugar_carro(lista[carro_alugado])
+
+
+                        print(cliente_certo)
+
+                        c = Cliente(v[cliente_certo])
+                        
+
+                        #c = testando()
+                        
+                        
+                        #teste_cliente = Cliente(v[cliente_alternativo])
+                        
+                        c.base_pro_historico(lista[carro_alugado])
+                        #teste_cliente.base_pro_historico(lista[carro_alugado])
+
+                        lista.pop(carro_alugado)
+
+                        
+                        #print(f"\nCarro alugado com sucesso na Data: {data_certa} pelo o Cliente {v[cliente_certo]}\n")
+                        print(f"\nCarro alugado com sucesso na Data: {data_certa} pelo o Cliente {c}\n")
+                        print(f"\nData de entrega do Carro é: {data_de_entrega}\n")
+                        print(f"Valor a se pagar no final do aluguel : {total} R$")
+
+                       
+
+                    os.system('pause')
+                    
+            elif (escolha == 7):
+
+                lista_alugados = cliente.historico
+                lista = self.disponivel.carros
+                
+                data = date.today()
+                data_certa = data.strftime('%d/%m')
+
+                if not lista_alugados:
+                    print("Nenhum carro está alugado!")
+
+                else:
+                    tam = len(lista_alugados)
+                    
+                    print("\nCarros em Aluguel: \n")
+                    for i in range(0,tam):
+                        print(f'{i + 1} - {lista_alugados[i]}\n')
+
+
+                    carro_devolvido = (int(input("Digite o carro que você desejar devolver: ")) - 1)
+                    nova_quilometragem = int(input("Digite a Quilometragem Final do Carro: "))
+                    tempo = int(input("O carro foi devolvido quantos dias após o aluguel? "))
+                    carro_d = lista_alugados[carro_devolvido]
+                    #Arrumar aqui depois, ja que to pegando pela a Classe (Carro)
+
+                    
+                        
+                    total = carro_d.valor_aluguel(tempo, 0) #o 0 significa o tempo de atraso, ajustar isso ainda
+                    #Arrumar aqui depois, ja que to pegando pela a Classe (Carro)
+                    
+                    #Ver também de fazer a comparação normal
+
+                    if carro_devolvido > tam:
+                        print("Impossível devolver um carro que não está na lista!")
+                    else: 
+                        lista.append(lista_alugados[carro_devolvido])
+                        cliente.devolver_carro(carro_devolvido, tempo)
+
+                        carro_d.mudanca_quilometragem(nova_quilometragem)
+                        #Arrumar aqui depois, ja que to pegando pela a Classe (Carro)
+
+                        print(f"\nCarro devolvido com sucesso na data {data_certa} pelo o Cliente ...\n")
+                        #print(f"\nData de entrega do Carro é: {data_de_entrega}\n")
+                        print(f"\nValor a se pagar no final do aluguel : {total} R$\n")
+
+
+                os.system('pause')
+
+            elif (escolha == 8):
+                nome = str(input("Digite seu Nome para o cadastro: "))  
+                #id = input("Digite seu ID como cliente: ")   #ID talvez seria bom gerar aleatoriamente, se der.
+                App.cadastrar_cliente(nome.upper())
+                
+                os.system('pause')
+
+            elif (escolha == 9):
+                clientes = clientes_cadastrados
+                historico_c = cliente.historico_clientes
+                tam = len(clientes_cadastrados)
+                #tam2 = len(self.cliente.historico_clientes)
+                '''
+                print("\nClientes Cadastrados: \n")
+                i = 1
+                for cliente in clientes:
+                    print(f'Nº {i} - {cliente} - {self.cliente.id}\n')
+                    i += 1
+                '''
+                cliente.mostrar()
+                hist = (int(input("Deseja ver o histórico de carros de qual cliente cadastrado? Escolha pela a numeração: ")) - 1)
+               
+                #cliente_ok = historico_clientes[hist]
+                cliente_ok = Cliente(clientes[hist])
+
+                #antigo_cliente = Cliente(cliente_ok)
+                cliente_ok.seu_historico()
+                
+                #cliente_ok.self.cliente.seu_historico()
+                        
+                     
+                    
+
+                os.system('pause')
+
+            elif (escolha == 10):
+                clientes = clientes_cadastrados
+                
+                cliente.historico_carros_alugado()
+
+                os.system('pause')
+
+            elif escolha == 0:
+                print("\nLocadora Encerrada!\n")
                 break
-            else:
-                print("Já cadastrado no sistema")
-        self.nome = str(input("Nome do cliente: ")).upper()
-        self.rg = str(input("RG: "))
-        usuario = {
-            'nome': self.nome,
-            'cpf': self.cpf,
-            'rg': self.rg
-        }
-
-        lista_clientes.append(usuario)
-        print(lista_clientes)
 
 
-App.menu(self=App)
+
+
+app = App()
+app.run()

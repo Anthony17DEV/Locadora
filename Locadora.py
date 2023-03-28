@@ -7,7 +7,7 @@ clientes_cadastrados = [] #Lista para guardar os clientes
 historico = [] #Lista para guardar os carros alugados
 
 class Veiculo(): #Classe Veiculo
-    def _init_(self, marca, modelo, ano):
+    def __init__(self, marca, modelo, ano):
         self.marca = marca
         self.modelo = modelo
         self.ano = ano
@@ -21,13 +21,13 @@ class Veiculo(): #Classe Veiculo
 
 
 class Carro(Veiculo): #Carro herda de veiculo
-    def _init_(self, marca, modelo, ano, placa, quilometragem, valor_diaria):
-        super()._init_(marca, modelo, ano)
+    def __init__(self, marca, modelo, ano, placa, quilometragem, valor_diaria):
+        super().__init__(marca, modelo, ano)
         self.placa = placa
         self.quilometragem = quilometragem
         self.valor_diaria = valor_diaria
 
-    def _str_(self): #Mostrar informações do carro
+    def __str__(self): #Mostrar informações do carro
         return f'{self.marca} {self.modelo} - Ano ({self.ano}) - Placa: {self.placa} - Valor da diária: {self.valor_diaria} R$ - Quilometragem do Carro: {self.quilometragem} Km'
     
     def valor_aluguel(self, dias, data):
@@ -60,7 +60,7 @@ class Carro(Veiculo): #Carro herda de veiculo
         self.quilometragem = quilo 
 
 class Cliente():  
-    def _init_(self,nome):
+    def __init__(self,nome):
         self.nome = nome
         self.id = randint(1, 200) #Gerar o ID automaticamente
         self.historico_clientes = [] #Lista para guardar os historicos dos clientes
@@ -78,12 +78,12 @@ class Cliente():
         self.historico_clientes.append(carro)
         tam2 = len(self.historico_clientes)
 
-    def _str_(self):
+    def __str__(self):
        return f'Cliente: {self.nome} - {self.id}'
     
 
-class Carro_Disponivel: #Classe pra conferir as disponibilidades dos carros
-    def _init_(self):
+class Carro_Disponivel(): #Classe pra conferir as disponibilidades dos carros
+    def __init__(self):
         self.carros = [] #Cria uma lista para armazenar os carros
 
     def adicionar_carro(self, carro):
@@ -105,7 +105,7 @@ class Carro_Disponivel: #Classe pra conferir as disponibilidades dos carros
 
 class App(Carro): #Classe app herda carro pra poder acessar as informações
 
-    def _init_(self):
+    def __init__(self):
         self.disponivel = Carro_Disponivel()
         
     def cadastrar_cliente(nome): #Cadastro de clientes
